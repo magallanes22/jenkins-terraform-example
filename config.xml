@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.12.2">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.45">
+    <script>node {
+
+
+    stage(&quot;Getting code from github&quot;)
+        git &apos;https://github.com/magallanes22/moduletwo&apos;
+
+    stage(&apos;Terraform init&apos;)
+        sh &apos;terraform init&apos;
+    stage(&apos;Terraform Plan&apos;)
+        input &quot;Terraform Plan. CONTINUE?&quot;
+        sh &quot;terraform plan -var-file=&apos;/var/jenkins_home/vars.tfvars&apos;&quot;
+    stage(&apos;Terraform Apply&apos;)
+        input &quot;Terraform APLLY, CONTINUE?&quot;
+        sh &quot;terraform apply -no-color -auto-approve -var-file=&apos;/var/jenkins_home/vars.tfvars&apos;&quot;
+    stage(&apos;Terraform Destroy&apos;)
+        input &quot;Terraform Destroy, CONTINUE?&quot;
+        sh &quot;terraform destroy -no-color -auto-approve -var-file=&apos;/var/jenkins_home/vars.tfvars&apos;&quot;
+
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
